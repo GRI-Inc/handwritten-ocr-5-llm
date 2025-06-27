@@ -83,7 +83,7 @@ export class PDFAnalyzer {
 
     try {
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-4o',
+        model: 'o3',
         messages: [
           {
             role: 'user',
@@ -103,7 +103,7 @@ export class PDFAnalyzer {
           },
         ],
         response_format: { type: 'json_object' },
-        temperature: 0.1,
+        temperature: 1.0, // o3モデルはデフォルト値のみサポート
       });
 
       const content = response.choices[0]?.message.content;

@@ -1,0 +1,65 @@
+{
+  "document_id": "石黒メモ.pdf",
+  "pages": [
+    {
+      "page": 1,
+      "comments": [
+        {
+          "id": "C1",
+          "bbox_norm": {
+            "x": 0.55,
+            "y": 0.05,
+            "w": 0.25,
+            "h": 0.05
+          },
+          "comment_text": "階段と外壁の水抜き？確認要",
+          "context_note": "階段と外壁の接続部分に関する確認事項。",
+          "related_elements": [
+            "階段",
+            "外壁"
+          ],
+          "severity": "warning",
+          "resolved": false,
+          "created_at": "2025-06-27T08:49:16.766Z"
+        },
+        {
+          "id": "C2",
+          "bbox_norm": {
+            "x": 0.15,
+            "y": 0.35,
+            "w": 0.3,
+            "h": 0.1
+          },
+          "comment_text": "大梁支持要を支柱してみた方が良いかも",
+          "context_note": "大梁の支持方法に関する提案。",
+          "related_elements": [
+            "大梁",
+            "支柱"
+          ],
+          "severity": "info",
+          "resolved": false,
+          "created_at": "2025-06-27T08:49:16.766Z"
+        },
+        {
+          "id": "C3",
+          "bbox_norm": {
+            "x": 0.15,
+            "y": 0.5,
+            "w": 0.4,
+            "h": 0.05
+          },
+          "comment_text": "エコー？高さ入ってない。保温材で：鉄筋はあり、水平を確認？",
+          "context_note": "エコーの高さと保温材に関する確認事項。",
+          "related_elements": [
+            "エコー",
+            "保温材",
+            "鉄筋"
+          ],
+          "severity": "error",
+          "resolved": false,
+          "created_at": "2025-06-27T08:49:16.766Z"
+        }
+      ]
+    }
+  ]
+}

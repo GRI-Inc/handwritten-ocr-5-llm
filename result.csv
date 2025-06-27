@@ -1,0 +1,4 @@
+Document ID,Page,Comment ID,Comment Text,Context Note,Related Elements,Severity,Resolved,X Position,Y Position,Width,Height,Created At
+石黒メモ.pdf,1,C1,階段と外壁の水抜き？確認要,階段と外壁の接続部分に関する確認事項。,階段; 外壁,warning,false,0.550,0.050,0.250,0.050,2025-06-27T08:49:16.766Z
+石黒メモ.pdf,1,C2,大梁支持要を支柱してみた方が良いかも,大梁の支持方法に関する提案。,大梁; 支柱,info,false,0.150,0.350,0.300,0.100,2025-06-27T08:49:16.766Z
+石黒メモ.pdf,1,C3,エコー？高さ入ってない。保温材で：鉄筋はあり、水平を確認？,エコーの高さと保温材に関する確認事項。,エコー; 保温材; 鉄筋,error,false,0.150,0.500,0.400,0.050,2025-06-27T08:49:16.766Z

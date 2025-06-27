@@ -1,4 +1,4 @@
-import * as pdf2img from 'pdf-img-convert';
+import { pdf } from 'pdf-to-img';
 import OpenAI from 'openai';
 import { type PDFAnalysisResult, type Page } from './types/comment-schema.ts';
 import { basename } from 'path';
@@ -14,11 +14,15 @@ export class PDFAnalyzer {
     console.log(`Converting PDF to images: ${pdfPath}`);
     
     try {
-      // Convert PDF pages to base64 images
-      const pdfPages = (await pdf2img.convert(pdfPath, {
-        height: 1998,
-        base64: true,
-      })) as string[];
+      // Convert PDF pages to images
+      const document = await pdf(pdfPath, { scale: 3 });
+      const pdfPages: string[] = [];
+      
+      // Convert each page to base64
+      for await (const image of document) {
+        const base64 = image.toString('base64');
+        pdfPages.push(base64);
+      }
 
       console.log(`Found ${pdfPages.length} pages`);
 

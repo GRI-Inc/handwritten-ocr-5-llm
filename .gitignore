@@ -39,6 +39,8 @@ tmp/
 temp/
 
 # Analysis results
-result_*.csv
-result_*.json
-*.pdf
+results/
+!results/.gitkeep
+
+# Sample PDFs (keep in samples/ directory)
+# samples/*.pdf can be committed if needed

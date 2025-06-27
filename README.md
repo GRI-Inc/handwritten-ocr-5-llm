@@ -36,23 +36,36 @@ OPENAI_API_KEY=your-api-key-here
 pnpm analyze <pdf-file>
 
 # 例：
-pnpm analyze "石黒メモ.pdf"
+pnpm analyze "samples/石黒メモ.pdf"
 ```
 
 ### オプション
 
 ```bash
-# CSV形式で出力
-pnpm analyze "石黒メモ.pdf" -o results.csv
+# CSV形式で出力（デフォルト: results/ディレクトリに保存）
+pnpm analyze "samples/石黒メモ.pdf" -o results/output.csv
 
 # JSON形式で出力
-pnpm analyze "石黒メモ.pdf" -j results.json
+pnpm analyze "samples/石黒メモ.pdf" -j results/output.json
 
 # 両方の形式で出力
-pnpm analyze "石黒メモ.pdf" -o results.csv -j results.json
+pnpm analyze "samples/石黒メモ.pdf" -o results/output.csv -j results/output.json
 
 # APIキーを直接指定
-pnpm analyze "石黒メモ.pdf" --api-key sk-xxx
+pnpm analyze "samples/石黒メモ.pdf" --api-key sk-xxx
+```
+
+## ディレクトリ構造
+
+```
+handwritten-ocr-5-o3/
+├── samples/          # サンプルPDFファイル
+│   └── *.pdf
+├── results/          # 分析結果ファイル（gitignore対象）
+│   ├── *.csv
+│   └── *.json
+├── src/              # ソースコード
+└── README.md
 ```
 
 ## 出力形式

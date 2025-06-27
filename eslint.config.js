@@ -22,6 +22,10 @@ export default tseslint.config(
     },
   },
   {
+    // ignore specific files
+    ignores: ["dist/", "*.config.js", "*.config.ts"],
+  },
+  {
     // warning for refactoring
     rules: {
       "@typescript-eslint/no-empty-interface": "warn",

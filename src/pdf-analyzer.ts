@@ -1,4 +1,4 @@
-import pdf2img from 'pdf-img-convert';
+import * as pdf2img from 'pdf-img-convert';
 import OpenAI from 'openai';
 import { type PDFAnalysisResult, type Page } from './types/comment-schema.ts';
 import { basename } from 'path';
@@ -13,30 +13,39 @@ export class PDFAnalyzer {
   async analyzePDF(pdfPath: string): Promise<PDFAnalysisResult> {
     console.log(`Converting PDF to images: ${pdfPath}`);
     
-    // Convert PDF pages to base64 images
-    const pdfPages = (await pdf2img.convert(pdfPath, {
-      height: 1998,
-      base64: true,
-    })) as string[];
+    try {
+      // Convert PDF pages to base64 images
+      const pdfPages = (await pdf2img.convert(pdfPath, {
+        height: 1998,
+        base64: true,
+      })) as string[];
 
-    console.log(`Found ${pdfPages.length} pages`);
+      console.log(`Found ${pdfPages.length} pages`);
 
-    const analysisResults: PDFAnalysisResult = {
-      document_id: basename(pdfPath),
-      pages: [],
-    };
+      const analysisResults: PDFAnalysisResult = {
+        document_id: basename(pdfPath),
+        pages: [],
+      };
 
-    // Process each page
-    for (let i = 0; i < pdfPages.length; i++) {
-      console.log(`Analyzing page ${i + 1}/${pdfPages.length}...`);
-      
-      const pageResult = await this.analyzePage(pdfPages[i], i + 1);
-      if (pageResult && pageResult.comments && pageResult.comments.length > 0) {
-        analysisResults.pages.push(pageResult);
+      // Process each page
+      for (let i = 0; i < pdfPages.length; i++) {
+        console.log(`Analyzing page ${i + 1}/${pdfPages.length}...`);
+        
+        const pageResult = await this.analyzePage(pdfPages[i], i + 1);
+        if (pageResult && pageResult.comments && pageResult.comments.length > 0) {
+          analysisResults.pages.push(pageResult);
+        }
       }
-    }
 
-    return analysisResults;
+      return analysisResults;
+    } catch (error) {
+      console.error('Error during PDF conversion:', error);
+      // Return empty result on error
+      return {
+        document_id: basename(pdfPath),
+        pages: [],
+      };
+    }
   }
 
   private async analyzePage(imageBase64: string, pageNumber: number): Promise<Page> {

@@ -23,7 +23,7 @@ export default tseslint.config(
   },
   {
     // ignore specific files
-    ignores: ["dist/", "*.config.js", "*.config.ts"],
+    ignores: ["dist/", "*.config.js", "*.config.ts", "vision-module/"],
   },
   {
     // warning for refactoring

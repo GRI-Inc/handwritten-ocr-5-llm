@@ -11,6 +11,8 @@ import type {
 } from '@llm-ocr/core';
 import { analyzeImage as analyzeImageCore } from './vision.js';
 import type { AnalyzeImageOptions } from './types.js';
+import { readFileSync } from 'fs';
+import { Buffer } from 'buffer';
 
 export class O3Provider implements OCRProvider {
   private apiKey?: string;
@@ -20,6 +22,15 @@ export class O3Provider implements OCRProvider {
   }
   
   async analyzeImage(image: ImageInput, options?: AnalyzeOptions): Promise<AnalyzeResult> {
+    // Convert file path to Buffer if needed
+    let imageData: string | Buffer;
+    if (typeof image === 'string' && !image.startsWith('data:') && !image.startsWith('http')) {
+      // It's a file path
+      imageData = readFileSync(image);
+    } else {
+      imageData = image;
+    }
+    
     // Convert core options to o3-specific options
     const o3Options: AnalyzeImageOptions = {
       prompt: options?.prompt,
@@ -29,7 +40,7 @@ export class O3Provider implements OCRProvider {
     };
     
     // Call the existing implementation
-    const result = await analyzeImageCore(image, o3Options);
+    const result = await analyzeImageCore(imageData, o3Options);
     
     // Convert to core result format
     return {

@@ -5,8 +5,13 @@ import { createO3Provider } from '@llm-ocr/o3';
 import { createGeminiProvider } from '@llm-ocr/gemini';
 
 // 定数定義
-const INPUT_DIR = 'handwritten-input';
-const OUTPUT_DIR = 'handwritten-output';
+import { dirname, resolve } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const PROJECT_ROOT = resolve(__dirname, '../../../');
+const INPUT_DIR = resolve(PROJECT_ROOT, 'handwritten-input');
+const OUTPUT_DIR = resolve(PROJECT_ROOT, 'handwritten-output');
 const SUPPORTED_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
 
 /**
@@ -35,6 +40,7 @@ export async function initializeDirectories(): Promise<void> {
   console.log(`1. ${INPUT_DIR}/ ディレクトリに画像ファイルを配置してください`);
   console.log('2. pnpm process を実行してください（または --provider gemini でGeminiを使用）');
   console.log(`3. 結果は ${OUTPUT_DIR}/ ディレクトリに出力されます`);
+  console.log('   出力形式: {画像名}_{プロバイダー}_{モデル}.txt');
 }
 
 /**
@@ -108,7 +114,14 @@ export async function processImages(options: {
   }
   
   // 処理結果サマリー
-  const results: Array<{ file: string; status: 'success' | 'error'; message?: string }> = [];
+  const results: Array<{ 
+    file: string; 
+    status: 'success' | 'error'; 
+    message?: string;
+    outputFile?: string;
+    provider?: string;
+    model?: string;
+  }> = [];
   
   // 各画像を処理
   for (const [index, file] of files.entries()) {
@@ -125,15 +138,24 @@ export async function processImages(options: {
         prompt: options.prompt || '画像に書かれているテキストを読み取って、書かれている内容をすべて教えてください。'
       });
       
-      // 結果をファイルに保存
-      const outputFile = join(OUTPUT_DIR, basename(file, extname(file)) + '.txt');
+      // 使用されたモデル名を取得（ファイル名用に正規化）
+      const modelName = (options.model || provider.getDefaultModel()).replace(/[.:]/g, '-');
+      
+      // 結果をファイルに保存（詳細型命名規則）
+      const outputFile = join(OUTPUT_DIR, `${basename(file, extname(file))}_${providerName}_${modelName}.txt`);
       writeFileSync(outputFile, result.text, 'utf-8');
       
       console.log(`✅ 成功: ${outputFile} に保存しました`);
       if (result.tokensUsed) {
         console.log(`   📊 トークン使用量: ${result.tokensUsed}`);
       }
-      results.push({ file, status: 'success' });
+      results.push({ 
+        file, 
+        status: 'success',
+        outputFile: basename(outputFile),
+        provider: providerName,
+        model: options.model || provider.getDefaultModel()
+      });
       
     } catch (error) {
       console.error(`❌ エラー: ${file} の処理に失敗しました`);

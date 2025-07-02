@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 import { program } from 'commander';
 import { config } from 'dotenv';
+import { dirname, resolve } from 'path';
+import { fileURLToPath } from 'url';
 import { initializeDirectories, processImages } from './handwritten-analyzer.js';
 
-// Load environment variables
-config();
+// Load environment variables from project root
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const projectRoot = resolve(__dirname, '../../../');
+config({ path: resolve(projectRoot, '.env') });
 
 program
   .name('llm-ocr')

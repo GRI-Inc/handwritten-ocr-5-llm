@@ -31,7 +31,7 @@ export class GeminiProvider implements OCRProvider {
   async analyzeImage(image: ImageInput, options?: AnalyzeOptions): Promise<AnalyzeResult> {
     try {
       // Select model
-      const modelName = options?.model || 'gemini-1.5-flash';
+      const modelName = options?.model || 'gemini-2.5-pro';
       const model = this.client.getGenerativeModel({ model: modelName });
       
       // Convert image to base64 if needed
@@ -90,7 +90,7 @@ export class GeminiProvider implements OCRProvider {
     
     // Test API key by making a simple request
     try {
-      const model = this.client.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const model = this.client.getGenerativeModel({ model: 'gemini-2.5-pro' });
       await model.generateContent('Test');
       return true;
     } catch (error) {
@@ -107,19 +107,19 @@ export class GeminiProvider implements OCRProvider {
     return {
       name: 'Google Gemini',
       version: '1.0.0',
-      models: ['gemini-1.5-flash', 'gemini-1.5-pro'],
+      models: ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'],
       maxFileSize: 20 * 1024 * 1024, // 20MB for inline data
       supportedFormats: ['png', 'jpg', 'jpeg', 'gif', 'webp']
     };
   }
   
   isModelAvailable(model: string): boolean {
-    const availableModels = ['gemini-1.5-flash', 'gemini-1.5-pro'];
+    const availableModels = ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
     return availableModels.includes(model);
   }
   
   getDefaultModel(): string {
-    return 'gemini-1.5-flash';
+    return 'gemini-2.5-pro';
   }
   
   /**

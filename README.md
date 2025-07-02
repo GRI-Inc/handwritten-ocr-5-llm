@@ -15,7 +15,7 @@
 
 - **@llm-ocr/core** - 共通インターフェースと型定義
 - **@llm-ocr/o3** - OpenAI o3モデルプロバイダー（推論特化、高精度）
-- **@llm-ocr/gemini** - Google Geminiプロバイダー（マルチモーダル、高速）
+- **@llm-ocr/gemini** - Google Geminiプロバイダー（2.5 Pro対応、マルチモーダル、高精度）
 - **@llm-ocr/cli** - コマンドラインインターフェース
 
 ## セットアップ
@@ -82,6 +82,9 @@ pnpm process -- --prompt "手書きテキストをすべて抽出してリスト
 pnpm process -- --max-tokens 5000
 
 # Geminiで特定のモデルを使用
+pnpm process -- --provider gemini --model gemini-2.5-flash
+
+# Gemini 1.5 Proを使用（レガシー）
 pnpm process -- --provider gemini --model gemini-1.5-pro
 ```
 
@@ -132,7 +135,7 @@ const provider = createGeminiProvider({
 
 // 画像を解析
 const result = await provider.analyzeImage('/path/to/image.png', {
-  model: 'gemini-1.5-flash', // または 'gemini-1.5-pro'
+  model: 'gemini-2.5-pro', // デフォルト。他: 'gemini-2.5-flash', 'gemini-1.5-pro'
   prompt: 'この画像からすべてのテキストを抽出してください'
 });
 
@@ -168,7 +171,7 @@ const result = await provider.analyzeImage('/path/to/image.png');
 | 機能 | o3 | Gemini |
 |------|-----|---------|
 | 最適な用途 | 複雑な推論、手書きテキスト | 一般的なOCR、高速処理 |
-| デフォルトモデル | o3 | gemini-1.5-flash |
+| デフォルトモデル | o3 | gemini-2.5-pro |
 | トークン使用量 | 高（10000以上推奨） | 中程度 |
 | マルチモーダル | 画像のみ | 画像＋他のモダリティ |
 | ファイルサイズ制限 | 20MB | 20MB |

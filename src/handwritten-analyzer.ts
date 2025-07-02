@@ -31,7 +31,7 @@ export async function initializeDirectories(): Promise<void> {
   
   console.log('\n📝 使い方:');
   console.log(`1. ${INPUT_DIR}/ ディレクトリに画像ファイルを配置してください`);
-  console.log('2. npx tsx src/cli.ts handwritten:process を実行してください');
+  console.log('2. npx tsx src/cli.ts process を実行してください');
   console.log(`3. 結果は ${OUTPUT_DIR}/ ディレクトリに出力されます`);
 }
 

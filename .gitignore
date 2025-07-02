@@ -26,6 +26,9 @@ Thumbs.db
 .env.local
 .env.*.local
 
+# Credentials
+.credentials/
+
 # Test
 coverage/
 *.lcov

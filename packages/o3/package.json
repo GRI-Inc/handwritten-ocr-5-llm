@@ -1,0 +1,35 @@
+{
+  "name": "@llm-ocr/o3",
+  "version": "1.0.0",
+  "description": "OpenAI o3 provider for LLM OCR",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "ocr",
+    "llm",
+    "openai",
+    "o3",
+    "vision"
+  ],
+  "author": "Toshiaki Ohmae",
+  "license": "MIT",
+  "dependencies": {
+    "@llm-ocr/core": "workspace:*",
+    "openai": "^5.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.4",
+    "typescript": "^5.8.3"
+  }
+}

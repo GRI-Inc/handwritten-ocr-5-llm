@@ -1,38 +1,59 @@
-# Handwritten Text Analyzer
+# LLM-OCR
 
-画像から手書きテキストを抽出するシンプルなCLIツールです。OpenAI o3モデル（推論特化型）を使用します。
+画像からテキストを抽出するマルチプロバイダー対応のOCRツールです。モノレポ構造により、必要なプロバイダーのみを選択して使用できます。
 
 ## 機能
 
+- 🎯 複数のLLMプロバイダーをサポート（OpenAI o3、Google Gemini）
+- 📦 モジュラー設計（必要なプロバイダーのみインストール可能）
 - 🖼️ 画像ファイルのバッチ処理
-- 🔍 o3モデルによる高精度なテキスト抽出
+- 🔍 高精度なテキスト抽出
 - 📁 シンプルな入出力ディレクトリ管理
 - 📊 処理ログの自動記録
+
+## パッケージ構成
+
+- **@llm-ocr/core** - 共通インターフェースと型定義
+- **@llm-ocr/o3** - OpenAI o3モデルプロバイダー（推論特化、高精度）
+- **@llm-ocr/gemini** - Google Geminiプロバイダー（マルチモーダル、高速）
+- **@llm-ocr/cli** - コマンドラインインターフェース
 
 ## セットアップ
 
 ### 1. 依存関係のインストール
 
 ```bash
+# リポジトリをクローン
+git clone https://github.com/yourusername/llm-ocr.git
+cd llm-ocr
+
+# 依存関係をインストール
 pnpm install
+
+# 全パッケージをビルド
+pnpm run build
 ```
 
-### 2. OpenAI APIキーの設定
+### 2. APIキーの設定
 
-`.env`ファイルを作成し、APIキーを設定：
+`.env`ファイルを作成し、使用するプロバイダーのAPIキーを設定：
 
 ```bash
-OPENAI_API_KEY=your-api-key-here
+# OpenAI o3プロバイダー用
+OPENAI_API_KEY=your-openai-api-key
+
+# Geminiプロバイダー用
+GEMINI_API_KEY=your-gemini-api-key
+# またはサービスアカウントファイルを使用
+GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account-key.json
 ```
 
-## 使用方法
+## CLI使用方法
 
 ### 1. 初期化
 
 ```bash
 pnpm init
-# または
-npx tsx src/cli.ts init
 ```
 
 これにより以下のディレクトリが作成されます：
@@ -48,12 +69,20 @@ npx tsx src/cli.ts init
 ### 3. バッチ処理の実行
 
 ```bash
+# o3プロバイダーを使用（デフォルト）
 pnpm process
-# または
-npx tsx src/cli.ts process
 
-# トークン数を指定（デフォルト: 10000）
-npx tsx src/cli.ts process --max-tokens 20000
+# Geminiプロバイダーを使用
+pnpm process -- --provider gemini
+
+# カスタムプロンプトを指定
+pnpm process -- --prompt "手書きテキストをすべて抽出してリスト形式でまとめてください"
+
+# トークン数を指定
+pnpm process -- --max-tokens 5000
+
+# Geminiで特定のモデルを使用
+pnpm process -- --provider gemini --model gemini-1.5-pro
 ```
 
 ### 4. 結果の確認
@@ -61,50 +90,103 @@ npx tsx src/cli.ts process --max-tokens 20000
 - 各画像の解析結果は `handwritten-output/` ディレクトリに `.txt` ファイルとして保存されます
 - 処理ログは `handwritten-output/process-log-[timestamp].json` として保存されます
 
-## 使用例
+## プログラマティック使用
+
+### npmパッケージとしての使用
+
+各プロバイダーは独立してインストール・使用できます：
 
 ```bash
-# ステップ1: 初期化
-pnpm init
-
-# ステップ2: 画像を配置
-cp my-images/*.png handwritten-input/
-
-# ステップ3: 処理実行
-pnpm process
-
-# ステップ4: 結果確認
-ls handwritten-output/
-# image1.txt
-# image2.txt
-# process-log-2025-07-02T08-58-50-382Z.json
+# 特定のプロバイダーをインストール
+npm install @llm-ocr/core @llm-ocr/o3
+# または
+npm install @llm-ocr/core @llm-ocr/gemini
 ```
+
+### 例: o3プロバイダーの使用
+
+```typescript
+import { createO3Provider } from '@llm-ocr/o3';
+
+const provider = createO3Provider({
+  apiKey: process.env.OPENAI_API_KEY
+});
+
+// 画像ファイルを解析
+const result = await provider.analyzeImage('/path/to/image.png', {
+  prompt: 'この画像からすべてのテキストを抽出してください',
+  maxTokens: 10000 // o3は高いトークン数が必要
+});
+
+console.log(result.text);
+```
+
+### 例: Geminiプロバイダーの使用
+
+```typescript
+import { createGeminiProvider } from '@llm-ocr/gemini';
+
+const provider = createGeminiProvider({
+  apiKey: process.env.GEMINI_API_KEY
+});
+
+// 画像を解析
+const result = await provider.analyzeImage('/path/to/image.png', {
+  model: 'gemini-1.5-flash', // または 'gemini-1.5-pro'
+  prompt: 'この画像からすべてのテキストを抽出してください'
+});
+
+console.log(result.text);
+```
+
+### 例: プロバイダー非依存のコード
+
+```typescript
+import type { OCRProvider } from '@llm-ocr/core';
+import { createO3Provider } from '@llm-ocr/o3';
+import { createGeminiProvider } from '@llm-ocr/gemini';
+
+// ファクトリー関数
+function createProvider(type: string): OCRProvider {
+  switch (type) {
+    case 'o3':
+      return createO3Provider();
+    case 'gemini':
+      return createGeminiProvider();
+    default:
+      throw new Error(`Unknown provider: ${type}`);
+  }
+}
+
+// 同じインターフェースで任意のプロバイダーを使用
+const provider = createProvider(process.env.OCR_PROVIDER || 'o3');
+const result = await provider.analyzeImage('/path/to/image.png');
+```
+
+## プロバイダー比較
+
+| 機能 | o3 | Gemini |
+|------|-----|---------|
+| 最適な用途 | 複雑な推論、手書きテキスト | 一般的なOCR、高速処理 |
+| デフォルトモデル | o3 | gemini-1.5-flash |
+| トークン使用量 | 高（10000以上推奨） | 中程度 |
+| マルチモーダル | 画像のみ | 画像＋他のモダリティ |
+| ファイルサイズ制限 | 20MB | 20MB |
 
 ## ディレクトリ構造
 
 ```
-handwritten-analyzer/
+llm-ocr/
+├── packages/
+│   ├── core/        # 共通インターフェースと型定義
+│   ├── o3/          # OpenAI o3プロバイダー
+│   ├── gemini/      # Google Geminiプロバイダー
+│   └── cli/         # コマンドラインインターフェース
 ├── handwritten-input/      # 画像入力ディレクトリ（.gitignore）
-│   └── *.png, *.jpg, etc.
 ├── handwritten-output/     # 結果出力ディレクトリ（.gitignore）
-│   ├── *.txt
-│   └── process-log-*.json
-├── vision-module/          # 画像解析コアモジュール
-│   └── src/
-├── src/                    # ソースコード
-│   ├── cli.ts
-│   ├── handwritten-analyzer.ts
-│   └── index.ts
-├── .env                    # 環境変数（.gitignore）
-└── README.md
+├── pnpm-workspace.yaml     # pnpmワークスペース設定
+└── package.json
 ```
-
-## 技術スタック
-
-- **言語**: TypeScript
-- **実行環境**: Node.js
-- **AI分析**: OpenAI o3（推論特化型モデル）
-- **CLI**: Commander.js
 
 ## スクリプト
 
@@ -112,8 +194,31 @@ handwritten-analyzer/
 |---------|-----|
 | `pnpm init` | 入出力ディレクトリを初期化 |
 | `pnpm process` | 画像を一括処理 |
+| `pnpm build` | 全パッケージをビルド |
 | `pnpm typecheck` | TypeScriptの型チェック |
 | `pnpm dev` | CLIツールを直接実行 |
+
+## 開発
+
+### ビルド
+
+```bash
+# 全パッケージをビルド
+pnpm run build
+
+# 特定のパッケージをビルド
+pnpm --filter @llm-ocr/core run build
+
+# 型チェック
+pnpm run typecheck
+```
+
+### 新しいプロバイダーの追加
+
+1. `packages/your-provider/` に新しいパッケージを作成
+2. `@llm-ocr/core` の `OCRProvider` インターフェースを実装
+3. CLIのプロバイダーファクトリーにパッケージを追加
+4. ドキュメントを更新
 
 ## 注意事項
 

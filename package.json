@@ -1,21 +1,23 @@
 {
-  "name": "handwritten-analyzer",
+  "name": "llm-ocr",
   "version": "1.0.0",
-  "description": "Handwritten text analyzer using OpenAI o3 model",
+  "description": "LLM-based OCR tools supporting multiple providers",
   "private": true,
   "type": "module",
   "scripts": {
-    "typecheck": "tsc --noEmit",
-    "dev": "tsx src/cli.ts",
-    "init": "tsx src/cli.ts init",
-    "process": "tsx src/cli.ts process"
+    "build": "pnpm --filter './packages/*' run build",
+    "typecheck": "pnpm --filter './packages/*' run typecheck",
+    "dev": "pnpm --filter '@llm-ocr/cli' run dev",
+    "init": "pnpm --filter '@llm-ocr/cli' run init",
+    "process": "pnpm --filter '@llm-ocr/cli' run process"
   },
   "keywords": [
     "ocr",
-    "handwritten",
-    "text-extraction",
+    "llm",
     "vision",
-    "o3"
+    "text-extraction",
+    "o3",
+    "gemini"
   ],
   "author": "Toshiaki Ohmae",
   "license": "MIT",
@@ -24,15 +26,5 @@
     "@types/node": "^24.0.4",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild"
-    ]
-  },
-  "dependencies": {
-    "commander": "^14.0.0",
-    "dotenv": "^16.6.0",
-    "openai": "^5.8.1"
   }
 }

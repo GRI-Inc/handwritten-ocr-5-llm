@@ -1,0 +1,35 @@
+{
+  "name": "@llm-ocr/gemini",
+  "version": "1.0.0",
+  "description": "Google Gemini provider for LLM OCR",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "ocr",
+    "llm",
+    "google",
+    "gemini",
+    "vision"
+  ],
+  "author": "Toshiaki Ohmae",
+  "license": "MIT",
+  "dependencies": {
+    "@llm-ocr/core": "workspace:*",
+    "@google/generative-ai": "^0.21.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.4",
+    "typescript": "^5.8.3"
+  }
+}

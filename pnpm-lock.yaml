@@ -7,16 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      commander:
-        specifier: ^14.0.0
-        version: 14.0.0
-      dotenv:
-        specifier: ^16.6.0
-        version: 16.6.0
-      openai:
-        specifier: ^5.8.1
-        version: 5.8.1
     devDependencies:
       '@types/node':
         specifier: ^24.0.4
@@ -24,6 +14,75 @@ importers:
       tsx:
         specifier: ^4.20.3
         version: 4.20.3
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
+
+  packages/cli:
+    dependencies:
+      '@llm-ocr/core':
+        specifier: workspace:*
+        version: link:../core
+      '@llm-ocr/gemini':
+        specifier: workspace:*
+        version: link:../gemini
+      '@llm-ocr/o3':
+        specifier: workspace:*
+        version: link:../o3
+      commander:
+        specifier: ^14.0.0
+        version: 14.0.0
+      dotenv:
+        specifier: ^16.6.0
+        version: 16.6.0
+    devDependencies:
+      '@types/node':
+        specifier: ^24.0.4
+        version: 24.0.4
+      tsx:
+        specifier: ^4.20.3
+        version: 4.20.3
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
+
+  packages/core:
+    devDependencies:
+      '@types/node':
+        specifier: ^24.0.4
+        version: 24.0.4
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
+
+  packages/gemini:
+    dependencies:
+      '@google/generative-ai':
+        specifier: ^0.21.0
+        version: 0.21.0
+      '@llm-ocr/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      '@types/node':
+        specifier: ^24.0.4
+        version: 24.0.4
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
+
+  packages/o3:
+    dependencies:
+      '@llm-ocr/core':
+        specifier: workspace:*
+        version: link:../core
+      openai:
+        specifier: ^5.8.1
+        version: 5.8.1
+    devDependencies:
+      '@types/node':
+        specifier: ^24.0.4
+        version: 24.0.4
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
@@ -180,6 +239,10 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@google/generative-ai@0.21.0':
+    resolution: {integrity: sha512-7XhUbtnlkSEZK15kN3t+tzIMxsbKm/dSkKBFalj+20NvPKe1kBY7mR2P7vuijEn+f06z5+A8bVGKO0v39cr6Wg==}
+    engines: {node: '>=18.0.0'}
+
   '@types/node@24.0.4':
     resolution: {integrity: sha512-ulyqAkrhnuNq9pB76DRBTkcS6YsmDALy6Ua63V8OhrOBgbcYt6IOdzpw5P1+dyRIyMerzLkeYWBeOXPpA9GMAA==}
 
@@ -308,6 +371,8 @@ snapshots:
 
   '@esbuild/win32-x64@0.25.5':
     optional: true
+
+  '@google/generative-ai@0.21.0': {}
 
   '@types/node@24.0.4':
     dependencies:

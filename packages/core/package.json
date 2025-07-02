@@ -1,0 +1,30 @@
+{
+  "name": "@llm-ocr/core",
+  "version": "1.0.0",
+  "description": "Core interfaces and types for LLM OCR providers",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "ocr",
+    "llm",
+    "interface",
+    "types"
+  ],
+  "author": "Toshiaki Ohmae",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^24.0.4",
+    "typescript": "^5.8.3"
+  }
+}

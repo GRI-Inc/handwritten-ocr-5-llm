@@ -1,0 +1,38 @@
+{
+  "name": "@llm-ocr/cli",
+  "version": "1.0.0",
+  "description": "CLI tool for LLM-based OCR",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "llm-ocr": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "dev": "tsx src/cli.ts",
+    "init": "tsx src/cli.ts init",
+    "process": "tsx src/cli.ts process"
+  },
+  "keywords": [
+    "ocr",
+    "llm",
+    "cli",
+    "tool"
+  ],
+  "author": "Toshiaki Ohmae",
+  "license": "MIT",
+  "dependencies": {
+    "@llm-ocr/core": "workspace:*",
+    "@llm-ocr/o3": "workspace:*",
+    "@llm-ocr/gemini": "workspace:*",
+    "commander": "^14.0.0",
+    "dotenv": "^16.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.4",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  }
+}

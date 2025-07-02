@@ -5,6 +5,7 @@ import { existsSync } from 'fs';
 import { resolve } from 'path';
 import { PDFAnalyzer } from './pdf-analyzer.ts';
 import { ResultFormatter } from './result-formatter.ts';
+import { initializeDirectories, processImages } from './handwritten-analyzer.ts';
 
 // Load environment variables
 config();
@@ -69,6 +70,35 @@ program
 
     } catch (error) {
       console.error('❌ Error during analysis:', error);
+      process.exit(1);
+    }
+  });
+
+// handwritten:initコマンド
+program
+  .command('handwritten:init')
+  .description('Initialize input/output directories for handwritten text analysis')
+  .action(async () => {
+    try {
+      await initializeDirectories();
+    } catch (error) {
+      console.error('❌ Error during initialization:', error);
+      process.exit(1);
+    }
+  });
+
+// handwritten:processコマンド
+program
+  .command('handwritten:process')
+  .description('Process images in the input directory and extract handwritten text')
+  .option('--max-tokens <number>', 'Maximum tokens for o3 model (default: 10000)', '10000')
+  .action(async (options: { maxTokens: string }) => {
+    try {
+      await processImages({
+        maxTokens: parseInt(options.maxTokens, 10)
+      });
+    } catch (error) {
+      console.error('❌ Error during processing:', error);
       process.exit(1);
     }
   });

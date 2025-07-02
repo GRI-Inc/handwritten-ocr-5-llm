@@ -29,7 +29,9 @@ OPENAI_API_KEY=your-api-key-here
 
 ## 使用方法
 
-### 基本的な使い方
+### PDFファイル分析
+
+基本的な使い方
 
 ```bash
 # PDFファイルを分析
@@ -55,16 +57,79 @@ pnpm analyze "samples/石黒メモ.pdf" -o results/output.csv -j results/output.
 pnpm analyze "samples/石黒メモ.pdf" --api-key sk-xxx
 ```
 
+### 画像解析CLIツール（シンプルモード）
+
+PDFではなく、画像ファイルを直接バッチ処理したい場合は、以下のシンプルなCLIツールを使用できます。
+
+#### 1. 初期化
+
+```bash
+# 入出力ディレクトリを作成
+npx tsx src/cli.ts handwritten:init
+```
+
+これにより以下のディレクトリが作成されます：
+- `handwritten-input/` - 画像ファイルを配置するディレクトリ
+- `handwritten-output/` - 解析結果が出力されるディレクトリ
+
+#### 2. 画像の配置
+
+`handwritten-input/` ディレクトリに解析したい画像ファイルを配置します。
+サポートされている形式: `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp`
+
+#### 3. バッチ処理の実行
+
+```bash
+# すべての画像を処理
+npx tsx src/cli.ts handwritten:process
+
+# トークン数を指定（デフォルト: 10000）
+npx tsx src/cli.ts handwritten:process --max-tokens 20000
+```
+
+#### 4. 結果の確認
+
+- 各画像の解析結果は `handwritten-output/` ディレクトリに `.txt` ファイルとして保存されます
+- 処理ログは `handwritten-output/process-log-[timestamp].json` として保存されます
+
+#### 使用例
+
+```bash
+# ステップ1: 初期化
+npx tsx src/cli.ts handwritten:init
+
+# ステップ2: 画像を配置
+cp my-images/*.png handwritten-input/
+
+# ステップ3: 処理実行
+npx tsx src/cli.ts handwritten:process
+
+# ステップ4: 結果確認
+ls handwritten-output/
+# image1.txt
+# image2.txt
+# process-log-2025-07-02T08-58-50-382Z.json
+```
+
 ## ディレクトリ構造
 
 ```
 handwritten-ocr-5-o3/
-├── samples/          # サンプルPDFファイル
+├── samples/                # サンプルPDFファイル
 │   └── *.pdf
-├── results/          # 分析結果ファイル（gitignore対象）
+├── results/                # 分析結果ファイル（gitignore対象）
 │   ├── *.csv
 │   └── *.json
-├── src/              # ソースコード
+├── handwritten-input/      # 画像解析用入力ディレクトリ
+│   └── *.png, *.jpg, etc.
+├── handwritten-output/     # 画像解析結果出力ディレクトリ
+│   ├── *.txt
+│   └── process-log-*.json
+├── vision-module/          # 画像解析コアモジュール
+├── src/                    # ソースコード
+│   ├── cli.ts
+│   ├── handwritten-analyzer.ts
+│   └── ...
 └── README.md
 ```
 

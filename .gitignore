@@ -42,5 +42,9 @@ temp/
 results/
 !results/.gitkeep
 
+# Handwritten analysis directories
+handwritten-input/
+handwritten-output/
+
 # Sample PDFs (keep in samples/ directory)
 # samples/*.pdf can be committed if needed

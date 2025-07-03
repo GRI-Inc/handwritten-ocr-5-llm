@@ -123,19 +123,52 @@ export async function processImages(options: {
     model?: string;
   }> = [];
   
-  // 各画像を処理
-  for (const [index, file] of files.entries()) {
-    console.log(`\n[${index + 1}/${files.length}] 処理中: ${file}`);
+  // 並行処理用の関数
+  async function processImage(file: string): Promise<typeof results[0]> {
+    const imagePath = join(INPUT_DIR, file);
     
     try {
-      // 画像ファイルを読み込み
-      const imagePath = join(INPUT_DIR, file);
+      console.log(`🔄 処理開始: ${file}`);
+      const startTime = Date.now();
       
       // 画像を解析
       const result = await provider.analyzeImage(imagePath, {
         model: options.model,
         maxTokens: options.maxTokens || 10000,
-        prompt: options.prompt || '画像に書かれているテキストを読み取って、書かれている内容をすべて教えてください。'
+        prompt: options.prompt || `You are an expert architectural drawing checker.
+Extract ALL handwritten review comments and minimal context.
+
+Keep EXACTLY the following headings and order.
+Do NOT add any other headings, numbers, bullets, or explanations.
+List ALL handwritten comments found in the drawing using the format shown below.
+Continue adding comments in the same format until all are documented.
+Begin after <START> and finish at <END>.
+
+<START>
+========== 図面情報 ==========
+図面名称：
+図面番号：
+図面種別：
+建物種別：
+
+========== 指摘事項 ==========
+■指摘1
+手書き内容：
+指摘対象：
+文脈情報：
+
+■指摘2
+手書き内容：
+指摘対象：
+文脈情報：
+
+■指摘3
+手書き内容：
+指摘対象：
+文脈情報：
+
+[Continue with ■指摘4, ■指摘5, etc. for all remaining handwritten comments]
+<END>`
       });
       
       // 使用されたモデル名を取得（ファイル名用に正規化）
@@ -145,27 +178,50 @@ export async function processImages(options: {
       const outputFile = join(OUTPUT_DIR, `${basename(file, extname(file))}_${providerName}_${modelName}.txt`);
       writeFileSync(outputFile, result.text, 'utf-8');
       
-      console.log(`✅ 成功: ${outputFile} に保存しました`);
+      const duration = ((Date.now() - startTime) / 1000).toFixed(1);
+      console.log(`✅ 完了: ${file} (${duration}秒)`);
       if (result.tokensUsed) {
-        console.log(`   📊 トークン使用量: ${result.tokensUsed}`);
+        console.log(`   📊 トークン: ${result.tokensUsed}`);
       }
-      results.push({ 
+      
+      return { 
         file, 
         status: 'success',
         outputFile: basename(outputFile),
         provider: providerName,
         model: options.model || provider.getDefaultModel()
-      });
+      };
       
     } catch (error) {
-      console.error(`❌ エラー: ${file} の処理に失敗しました`);
-      console.error(error instanceof Error ? error.message : String(error));
-      results.push({ 
+      console.error(`❌ 失敗: ${file}`);
+      console.error(`   ${error instanceof Error ? error.message : String(error)}`);
+      return { 
         file, 
         status: 'error', 
         message: error instanceof Error ? error.message : String(error) 
-      });
+      };
     }
+  }
+  
+  // 同時実行数制限付き並行処理
+  const CONCURRENCY_LIMIT = 3;
+  console.log(`\n🚀 並行処理開始（同時実行数: ${CONCURRENCY_LIMIT}）`);
+  
+  // ファイルをチャンクに分割
+  for (let i = 0; i < files.length; i += CONCURRENCY_LIMIT) {
+    const chunk = files.slice(i, i + CONCURRENCY_LIMIT);
+    console.log(`\n📊 バッチ ${Math.floor(i / CONCURRENCY_LIMIT) + 1}/${Math.ceil(files.length / CONCURRENCY_LIMIT)}: ${chunk.join(', ')}`);
+    
+    // チャンク内で並行処理
+    const chunkPromises = chunk.map(file => processImage(file));
+    const chunkResults = await Promise.allSettled(chunkPromises);
+    
+    // 結果を収集
+    chunkResults.forEach(result => {
+      if (result.status === 'fulfilled') {
+        results.push(result.value);
+      }
+    });
   }
   
   // 処理結果のサマリー

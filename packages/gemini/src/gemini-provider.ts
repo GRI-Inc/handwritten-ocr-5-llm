@@ -107,14 +107,14 @@ export class GeminiProvider implements OCRProvider {
     return {
       name: 'Google Gemini',
       version: '1.0.0',
-      models: ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'],
+      models: ['gemini-2.5-pro', 'gemini-2.5-flash'],
       maxFileSize: 20 * 1024 * 1024, // 20MB for inline data
       supportedFormats: ['png', 'jpg', 'jpeg', 'gif', 'webp']
     };
   }
   
   isModelAvailable(model: string): boolean {
-    const availableModels = ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+    const availableModels = ['gemini-2.5-pro', 'gemini-2.5-flash'];
     return availableModels.includes(model);
   }
   

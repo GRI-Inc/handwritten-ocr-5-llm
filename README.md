@@ -83,9 +83,6 @@ pnpm process -- --max-tokens 5000
 
 # Geminiで特定のモデルを使用
 pnpm process -- --provider gemini --model gemini-2.5-flash
-
-# Gemini 1.5 Proを使用（レガシー）
-pnpm process -- --provider gemini --model gemini-1.5-pro
 ```
 
 ### 4. 結果の確認
@@ -135,7 +132,7 @@ const provider = createGeminiProvider({
 
 // 画像を解析
 const result = await provider.analyzeImage('/path/to/image.png', {
-  model: 'gemini-2.5-pro', // デフォルト。他: 'gemini-2.5-flash', 'gemini-1.5-pro'
+  model: 'gemini-2.5-pro', // デフォルト。他: 'gemini-2.5-flash'
   prompt: 'この画像からすべてのテキストを抽出してください'
 });
 

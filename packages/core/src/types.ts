@@ -17,7 +17,7 @@ export interface AnalyzeOptions {
   prompt?: string;
   
   /**
-   * Model-specific identifier (e.g., 'o3', 'gemini-1.5-flash')
+   * Model-specific identifier (e.g., 'o3', 'gemini-2.5-flash')
    */
   model?: string;
   

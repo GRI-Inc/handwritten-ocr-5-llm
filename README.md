@@ -1,104 +1,157 @@
 # LLM-OCR
 
-画像からテキストを抽出するマルチプロバイダー対応のOCRツールです。モノレポ構造により、必要なプロバイダーのみを選択して使用できます。
-
-## 機能
-
-- 🎯 複数のLLMプロバイダーをサポート（OpenAI o3、Google Gemini）
-- 📦 モジュラー設計（必要なプロバイダーのみインストール可能）
-- 🖼️ 画像ファイルのバッチ処理
-- 🔍 高精度なテキスト抽出
-- 📁 シンプルな入出力ディレクトリ管理
-- 📊 処理ログの自動記録
+建築図面の手書き指摘事項を自動抽出するOCRシステムです。OpenAI o3とGoogle Geminiの2つのプロバイダーに対応しています。
 
 ## 🚀 クイックスタート
 
-詳細な使い方は[クイックスタートガイド](QUICKSTART.md)をご覧ください。
-
-## パッケージ構成
-
-- **@llm-ocr/core** - 共通インターフェースと型定義
-- **@llm-ocr/o3** - OpenAI o3モデルプロバイダー（推論特化、高精度）
-- **@llm-ocr/gemini** - Google Geminiプロバイダー（2.5 Pro対応、マルチモーダル、高精度）
-- **@llm-ocr/cli** - コマンドラインインターフェース
-
-## セットアップ
-
-### 1. 依存関係のインストール
+### 1. セットアップ（初回のみ）
 
 ```bash
-# リポジトリをクローン
-git clone https://github.com/yourusername/llm-ocr.git
-cd llm-ocr
+# リポジトリのクローン
+git clone https://github.com/OhmaeToshiaki/handwritten-ocr-5-o3.git
+cd handwritten-ocr-5-o3
 
-# 依存関係をインストール
+# 依存関係のインストール
 pnpm install
 
-# 全パッケージをビルド
-pnpm run build
-```
-
-### 2. APIキーの設定
-
-`.env`ファイルを作成し、使用するプロバイダーのAPIキーを設定：
-
-```bash
-# OpenAI o3プロバイダー用
-OPENAI_API_KEY=your-openai-api-key
-
-# Geminiプロバイダー用
-GEMINI_API_KEY=your-gemini-api-key
-# またはサービスアカウントファイルを使用
-GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account-key.json
-```
-
-## CLI使用方法
-
-### 1. 初期化
-
-```bash
+# 入出力ディレクトリの初期化
 pnpm init
 ```
 
-これにより以下のディレクトリが作成されます：
-- `handwritten-input/` - 画像ファイルを配置するディレクトリ
-- `handwritten-output/` - 解析結果が出力されるディレクトリ
+### 2. 環境設定（.envファイル）
 
-### 2. 画像の配置
-
-`handwritten-input/` ディレクトリに解析したい画像ファイルを配置します。
-
-サポートされている形式: `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp`
-
-### 3. バッチ処理の実行
+プロジェクトルートに`.env`ファイルを作成：
 
 ```bash
-# o3プロバイダーを使用（デフォルト）
+# OpenAI（o3プロバイダー用）
+OPENAI_API_KEY=your-openai-api-key
+
+# Google Cloud（Geminiプロバイダー用）
+GOOGLE_SERVICE_ACCOUNT_JSON=/path/to/your-service-account.json
+```
+
+### 3. 使い方
+
+```bash
+# 画像をinputディレクトリに配置
+cp your-drawing.png handwritten-input/
+
+# 処理実行（デフォルト: o3プロバイダー）
 pnpm process
 
 # Geminiプロバイダーを使用
 pnpm process -- --provider gemini
 
-# カスタムプロンプトを指定
-pnpm process -- --prompt "手書きテキストをすべて抽出してリスト形式でまとめてください"
+# 結果確認
+cat handwritten-output/your-drawing_o3_o3.txt
+```
 
-# トークン数を指定
-pnpm process -- --max-tokens 5000
+## 📋 前提条件
 
-# Geminiで特定のモデルを使用
+- **Node.js**: v20以上
+- **pnpm**: v10以上（`npm install -g pnpm`でインストール）
+- **APIキー**: 
+  - OpenAI API Key: [取得はこちら](https://platform.openai.com/api-keys)
+  - Google Cloud Service Account: [設定ガイド](https://cloud.google.com/iam/docs/keys-create-delete)
+
+> ⚠️ **API利用料金について**  
+> 本システムの利用には、OpenAIまたはGoogle CloudのAPI利用料金が発生します。
+
+## 📁 入出力仕様
+
+**入力**
+- 📂 `handwritten-input/` ディレクトリ
+- 🖼️ 対応形式: PNG, JPEG, GIF, WEBP
+- 📐 建築図面の手書き指摘画像
+
+**出力**
+- 📂 `handwritten-output/` ディレクトリ  
+- 📄 形式: `{画像名}_{プロバイダー}_{モデル}.txt`
+- 📊 構造化された指摘事項
+
+出力例：
+```
+========== 図面情報 ==========
+図面名称：空調設備 1・2階平面図
+図面番号：M-04
+図面種別：設備図
+縮尺：A1=1:200 / A3=1:400
+
+========== 指摘事項 ==========
+■指摘1
+手書き内容：
+側溝が横断しているが問題ないか？
+指摘対象：
+トラックヤード出入口と喫煙室の間の側溝
+文脈情報：
+車両通行時の強度について確認を求めている
+```
+
+## 🎮 コマンドリファレンス
+
+### 基本コマンド
+
+| コマンド | 説明 | 例 |
+|---------|------|-----|
+| `pnpm init` | 入出力ディレクトリを初期化 | `pnpm init` |
+| `pnpm process` | 画像を処理（デフォルト: o3） | `pnpm process` |
+
+### オプション
+
+| オプション | 説明 | デフォルト | 例 |
+|-----------|------|-----------|-----|
+| `-p, --provider` | OCRプロバイダー | `o3` | `--provider gemini` |
+| `--model` | 使用モデル | プロバイダー依存 | `--model gemini-2.5-flash` |
+| `--max-tokens` | 最大トークン数 | `10000` | `--max-tokens 15000` |
+| `--prompt` | カスタムプロンプト | 組み込みプロンプト | `--prompt "詳細に抽出"` |
+
+## 💡 使用例
+
+### 複数画像の一括処理
+
+```bash
+# 複数の画像をinputディレクトリに配置
+cp drawings/*.png handwritten-input/
+
+# 全画像を処理（3並列で実行）
+pnpm process
+
+# 結果確認
+ls -la handwritten-output/
+```
+
+### プロバイダー比較
+
+```bash
+# o3で処理
+pnpm process
+
+# 続けてGeminiで処理
+pnpm process -- --provider gemini
+
+# 結果を比較
+diff handwritten-output/drawing_o3_o3.txt \
+     handwritten-output/drawing_gemini_gemini-2.5-pro.txt
+```
+
+### 高速処理（Gemini Flash）
+
+```bash
 pnpm process -- --provider gemini --model gemini-2.5-flash
 ```
 
-### 4. 結果の確認
+## 📦 パッケージ構成
 
-- 各画像の解析結果は `handwritten-output/` ディレクトリに `.txt` ファイルとして保存されます
-- 処理ログは `handwritten-output/process-log-[timestamp].json` として保存されます
+モノレポ構造で以下のパッケージから構成されています：
 
-## プログラマティック使用
+- **@llm-ocr/core** - 共通インターフェースと型定義
+- **@llm-ocr/o3** - OpenAI o3プロバイダー（推論特化、高精度）
+- **@llm-ocr/gemini** - Google Geminiプロバイダー（マルチモーダル対応）
+- **@llm-ocr/cli** - コマンドラインインターフェース
 
-### npmパッケージとしての使用
+## 🔧 プログラマティック使用
 
-各プロバイダーは独立してインストール・使用できます：
+### インストール
 
 ```bash
 # 特定のプロバイダーをインストール
@@ -107,7 +160,7 @@ npm install @llm-ocr/core @llm-ocr/o3
 npm install @llm-ocr/core @llm-ocr/gemini
 ```
 
-### 例: o3プロバイダーの使用
+### TypeScriptでの使用例
 
 ```typescript
 import { createO3Provider } from '@llm-ocr/o3';
@@ -116,120 +169,59 @@ const provider = createO3Provider({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-// 画像ファイルを解析
 const result = await provider.analyzeImage('/path/to/image.png', {
-  prompt: 'この画像からすべてのテキストを抽出してください',
-  maxTokens: 10000 // o3は高いトークン数が必要
+  prompt: '建築図面の手書き指摘事項を抽出してください',
+  maxTokens: 10000
 });
 
 console.log(result.text);
 ```
 
-### 例: Geminiプロバイダーの使用
-
-```typescript
-import { createGeminiProvider } from '@llm-ocr/gemini';
-
-const provider = createGeminiProvider({
-  apiKey: process.env.GEMINI_API_KEY
-});
-
-// 画像を解析
-const result = await provider.analyzeImage('/path/to/image.png', {
-  model: 'gemini-2.5-pro', // デフォルト。他: 'gemini-2.5-flash'
-  prompt: 'この画像からすべてのテキストを抽出してください'
-});
-
-console.log(result.text);
-```
-
-### 例: プロバイダー非依存のコード
-
-```typescript
-import type { OCRProvider } from '@llm-ocr/core';
-import { createO3Provider } from '@llm-ocr/o3';
-import { createGeminiProvider } from '@llm-ocr/gemini';
-
-// ファクトリー関数
-function createProvider(type: string): OCRProvider {
-  switch (type) {
-    case 'o3':
-      return createO3Provider();
-    case 'gemini':
-      return createGeminiProvider();
-    default:
-      throw new Error(`Unknown provider: ${type}`);
-  }
-}
-
-// 同じインターフェースで任意のプロバイダーを使用
-const provider = createProvider(process.env.OCR_PROVIDER || 'o3');
-const result = await provider.analyzeImage('/path/to/image.png');
-```
-
-## プロバイダー比較
+## 📊 プロバイダー比較
 
 | 機能 | o3 | Gemini |
 |------|-----|---------|
-| 最適な用途 | 複雑な推論、手書きテキスト | 一般的なOCR、高速処理 |
+| 最適な用途 | 複雑な推論、手書きテキスト | 高速処理、一般的なOCR |
 | デフォルトモデル | o3 | gemini-2.5-pro |
+| 高速モデル | - | gemini-2.5-flash |
 | トークン使用量 | 高（10000以上推奨） | 中程度 |
-| マルチモーダル | 画像のみ | 画像＋他のモダリティ |
-| ファイルサイズ制限 | 20MB | 20MB |
+| 処理速度 | 遅い | 速い（Flashは超高速） |
 
-## ディレクトリ構造
+## 🔧 トラブルシューティング
 
-```
-llm-ocr/
-├── packages/
-│   ├── core/        # 共通インターフェースと型定義
-│   ├── o3/          # OpenAI o3プロバイダー
-│   ├── gemini/      # Google Geminiプロバイダー
-│   └── cli/         # コマンドラインインターフェース
-├── handwritten-input/      # 画像入力ディレクトリ（.gitignore）
-├── handwritten-output/     # 結果出力ディレクトリ（.gitignore）
-├── pnpm-workspace.yaml     # pnpmワークスペース設定
-└── package.json
-```
+1. **`pnpm: command not found`**
+   ```bash
+   npm install -g pnpm
+   ```
 
-## スクリプト
+2. **APIキーエラー**
+   - `.env`ファイルが正しく設定されているか確認
+   - パスは絶対パスで指定
 
-| コマンド | 説明 |
-|---------|-----|
-| `pnpm init` | 入出力ディレクトリを初期化 |
-| `pnpm process` | 画像を一括処理 |
-| `pnpm build` | 全パッケージをビルド |
-| `pnpm typecheck` | TypeScriptの型チェック |
-| `pnpm dev` | CLIツールを直接実行 |
+3. **画像が処理されない**
+   - 対応形式: PNG, JPG, JPEG, GIF, WEBP
+   - `handwritten-input/`ディレクトリに正しく配置されているか確認
 
-## 開発
+4. **Geminiのタイムアウト**
+   ```bash
+   pnpm process -- --provider gemini --max-tokens 20000
+   ```
 
-### ビルド
+## 🤝 貢献
 
-```bash
-# 全パッケージをビルド
-pnpm run build
+Pull Requestを歓迎します！
 
-# 特定のパッケージをビルド
-pnpm --filter @llm-ocr/core run build
+1. Fork
+2. Feature branch作成 (`git checkout -b feature/amazing-feature`)
+3. Commit (`git commit -m 'Add amazing feature'`)
+4. Push (`git push origin feature/amazing-feature`)
+5. Pull Request作成
 
-# 型チェック
-pnpm run typecheck
-```
+## 📄 ライセンス
 
-### 新しいプロバイダーの追加
+MIT License
 
-1. `packages/your-provider/` に新しいパッケージを作成
-2. `@llm-ocr/core` の `OCRProvider` インターフェースを実装
-3. CLIのプロバイダーファクトリーにパッケージを追加
-4. ドキュメントを更新
+## 🔗 関連ドキュメント
 
-## 注意事項
-
-- o3モデルは推論に多くのトークンを使用するため、`--max-tokens` は最低10,000を推奨
-- 大量の画像を処理する場合は、API利用料金にご注意ください
-- 処理結果は自動的に保存されますが、`handwritten-output/` ディレクトリは定期的にクリーンアップしてください
-
-## ライセンス
-
-MIT
+- [詳細なクイックスタートガイド](QUICKSTART.md)
+- [データスキーマ仕様](docs/SCHEMA.md)

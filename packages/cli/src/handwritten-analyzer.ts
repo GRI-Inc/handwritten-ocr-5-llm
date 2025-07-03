@@ -136,20 +136,24 @@ export async function processImages(options: {
         model: options.model,
         maxTokens: options.maxTokens || 10000,
         prompt: options.prompt || `You are an expert architectural drawing checker.
-Extract ALL handwritten review comments and minimal context.
+Extract ALL handwritten review comments and describe their context so that an architect who cannot see the drawing can still picture the location and issue.
 
-Keep EXACTLY the following headings and order.
-Do NOT add any other headings, numbers, bullets, or explanations.
-List ALL handwritten comments found in the drawing using the format shown below.
-Continue adding comments in the same format until all are documented.
-Begin after <START> and finish at <END>.
+RULES:
+1. Keep EXACTLY the headings shown below and in the same order.
+2. Under 「図面情報」 output any key-value pairs you can read, one per line.
+   - Common items include: 図面名称, 図面番号, 図面種別, 建物種別, 縮尺, 日付
+   - If a typical item is not visible, write: <key>：(not visible)
+3. Under 「指摘事項」 list ALL comments in the order they appear: ■指摘1, ■指摘2, … 
+   For each comment output:
+     手書き内容：〈exact handwriting〉
+     指摘対象：〈short descriptive phrase, e.g. "梁 G2 と柱 C-3 の取り合い部"〉
+     文脈情報：〈1-2 sentences with floor, grid, room, neighboring elements, e.g. "2階X3-Y2通り、会議室Bの北側壁面、柱C-12に隣接"〉
+4. Do NOT add headings, bullets, or explanations other than those specified.
+5. Begin immediately after the token <START> and finish just before <END>.
 
 <START>
 ========== 図面情報 ==========
-図面名称：
-図面番号：
-図面種別：
-建物種別：
+(Output any readable key-value pairs here)
 
 ========== 指摘事項 ==========
 ■指摘1
@@ -167,7 +171,7 @@ Begin after <START> and finish at <END>.
 指摘対象：
 文脈情報：
 
-[Continue with ■指摘4, ■指摘5, etc. for all remaining handwritten comments]
+[Continue with ■指摘4, ■指摘5, etc. for ALL remaining handwritten comments]
 <END>`
       });
       

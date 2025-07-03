@@ -21,7 +21,7 @@
 
 ```bash
 # リポジトリのクローン
-git clone https://github.com/OhmaeToshiaki/handwritten-ocr-5-llm.git
+git clone https://github.com/GRI-Inc/handwritten-ocr-5-llm.git
 cd handwritten-ocr-5-llm
 
 # 依存関係のインストール（pnpm必須）

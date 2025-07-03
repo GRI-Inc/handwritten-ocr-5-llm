@@ -20,14 +20,34 @@ pnpm init
 
 ### 2. 環境設定（.envファイル）
 
-プロジェクトルートに`.env`ファイルを作成：
+プロジェクトルートに`.env`ファイルを作成します：
+
+```bash
+# .envファイルを作成
+touch .env
+
+# エディタで開く（例：nano）
+nano .env
+```
+
+以下の内容を記入して保存：
 
 ```bash
 # OpenAI（o3プロバイダー用）
 OPENAI_API_KEY=your-openai-api-key
 
 # Google Cloud（Geminiプロバイダー用）
+# JSONファイルの絶対パスを指定
 GOOGLE_SERVICE_ACCOUNT_JSON=/path/to/your-service-account.json
+```
+
+または、コマンドラインで直接作成：
+
+```bash
+cat > .env << EOF
+OPENAI_API_KEY=your-openai-api-key
+GOOGLE_SERVICE_ACCOUNT_JSON=/path/to/your-service-account.json
+EOF
 ```
 
 ### 3. 使い方

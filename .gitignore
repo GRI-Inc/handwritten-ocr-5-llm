@@ -2,6 +2,8 @@
 .tmp/
 *.tmp
 *.temp
+CLAUDE.md
+@Claude-Mistakes.md
 
 # Node.js
 node_modules/

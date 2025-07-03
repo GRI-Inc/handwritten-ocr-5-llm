@@ -1,4 +1,4 @@
-# LLM-OCR クイックスタートガイド
+# Handwritten-OCR-5-LLM クイックスタートガイド
 
 建築図面の手書き指摘事項を自動抽出するOCRシステムです。OpenAI o3とGoogle Geminiの2つのプロバイダーに対応しています。
 
@@ -21,8 +21,8 @@
 
 ```bash
 # リポジトリのクローン
-git clone https://github.com/OhmaeToshiaki/handwritten-ocr-5-o3.git
-cd handwritten-ocr-5-o3
+git clone https://github.com/OhmaeToshiaki/handwritten-ocr-5-llm.git
+cd handwritten-ocr-5-llm
 
 # 依存関係のインストール（pnpm必須）
 pnpm install

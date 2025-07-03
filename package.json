@@ -1,5 +1,5 @@
 {
-  "name": "llm-ocr",
+  "name": "handwritten-ocr-5-llm",
   "version": "1.0.0",
   "description": "LLM-based OCR tools supporting multiple providers",
   "private": true,
